@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
-  <title>REST API Documentation</title>
+  <title>Techcombank API Documentation</title>
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,600&display=swap" rel="stylesheet">
 </head>
 
@@ -13,7 +13,6 @@
    <rapi-doc
       id = "thedoc"
 
-      spec-url = "${TMPL_RAPIDOC_SPEC_URL}"
       server-url="${TMPL_RAPIDOC_SERVER_URL}"
       default-api-server="${TMPL_RAPIDOC_DEFAULT_API_SERVER}"
 
@@ -51,7 +50,7 @@
       allow-spec-url-load = "${TMPL_RAPIDOC_ALLOW_SPEC_URL_LOAD}"
       allow-server-selection = "${TMPL_RAPIDOC_ALLOW_SERVER_SELECTION}"
    >
-      <img slot="logo" src="${TMPL_RAPIDOC_LOGO_URL}">
+      <img slot="logo" src="${TMPL_RAPIDOC_LOGO_URL}" style="height:30px;">
       <div slot="header" id="apispecs" style="display:flex; margin:0px 16px; justify-content:right; flex-direction: row-reverse; flex:1;">
          <style>
             .spec-item {

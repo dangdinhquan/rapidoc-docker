@@ -4,7 +4,7 @@
  * 
  * @return {Element} the RapiDoc element.
  */
-function getRapiDoc() {
+ function getRapiDoc() {
    return document.getElementById("thedoc");
  }
 /**
@@ -12,13 +12,17 @@ function getRapiDoc() {
  * 
  * @param {String} specUrl - The url to the spec to load in the component.
  */
-function changeSpecUrl(specUrl) {
+function changeSpecUrl(specId, specUrl) {
    let docEl = getRapiDoc();
    let search = document.getElementById("search");
    if (search) {
       search.value = ""
    }
    docEl.setAttribute('spec-url', specUrl);
+
+   const url = new URL(window.location);
+   url.searchParams.set('api', specId);
+   window.history.pushState({}, "", url.origin.toString() + url.search.toString());
  }
 
  /**
@@ -45,7 +49,8 @@ function createApiSpecElement(spec) {
 
    let specNode = document.createElement("div");
    specNode.className = "spec-item";
-   specNode.setAttribute("data-spec", spec.url);
+   specNode.setAttribute("api-specs-id", spec.id);
+   specNode.setAttribute("api-specs-url", spec.url);
 
    let headerNode = document.createElement("div");
    headerNode.className = "spec-header";
@@ -55,15 +60,16 @@ function createApiSpecElement(spec) {
 
    specNode.onclick = function() {
     
-   let specs = document.querySelectorAll(".spec-header.active");
-   for(var s=0; s<specs.length; s++) {
-      specs[s].className = "spec-header";
-   }
-       
+      let specs = document.querySelectorAll(".spec-header.active");
+      for(var s=0; s<specs.length; s++) {
+         specs[s].className = "spec-header";
+      }
+         
 
-   this.childNodes[0].className = "spec-header active";
-   let url = this.getAttribute("data-spec");
-      changeSpecUrl(url);
+      this.childNodes[0].className = "spec-header active";
+      let apiSpecId = this.getAttribute("api-specs-id");
+      let apiSpecUrl = this.getAttribute("api-specs-url");
+      changeSpecUrl(apiSpecId, apiSpecUrl);
    }
 
    return specNode;
@@ -106,7 +112,6 @@ function createMessage(title, text) {
  * @param {Function} onError    - a callback that is executed in case of any error.
  */
 function loadManifest(url, onSuccess, onError) {
-  
    if (!url || url == "") {
   
       console.warn("[API Selector] - Manifest file is empty or null, removing API selector...");
@@ -154,17 +159,16 @@ function renderManifest(manifest) {
          menu.appendChild(specNode);
       }
 
-      if (manifest.default) {
-   
-         let defNode = menu.querySelector("div[data-spec='" + manifest.default + "']");
-         if (defNode) {
-            defNode.click();
-         } else {
-	   console.warn("[API Selector] - There is no OpenAPI specification matching: " + manifest.default);
-	 }
+      const urlParams = new URLSearchParams(window.location.search);
+      const queryApiSpecs = urlParams.get('api');
+      const apiSpecs = manifest.specs.find(spec => spec.id === queryApiSpecs);
+      if (apiSpecs) {
+         changeSpecUrl(apiSpecs.id, apiSpecs.url);
+      }
+      else {
+         changeSpecUrl(manifest.default.id, manifest.default.url);
       }
    } else {
-
       let error = createMessage("Ooops!", "There are no API specifications available.");
       menu.appendChild(error);
    }
