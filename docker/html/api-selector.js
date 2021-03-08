@@ -126,7 +126,7 @@ function loadManifest(url, onSuccess, onError) {
       request.onreadystatechange = function () {
          if (request.readyState == 4) { 
             if (request.status == "200") {
-               let manifest = JSON.parse(request.responseText);
+               let manifest = $.parseJSON(request.responseText);
                onSuccess(manifest);
             } else {
                onError(request)
@@ -148,15 +148,33 @@ function loadManifest(url, onSuccess, onError) {
 function renderManifest(manifest) {
 
    let menu = getApiSpecsMenu();
+   let selectionBox = document.getElementById("list-api-specs");
+
 
    if (manifest.specs.length) {
 
       for (var i=0; i<manifest.specs.length; i++) {
 
          let spec = manifest.specs[i];
-         let specNode = createApiSpecElement(spec);
+         // let specNode = createApiSpecElement(spec);
    
-         menu.appendChild(specNode);
+         // menu.appendChild(specNode);
+
+         var option = document.createElement("option");
+         option.value = spec.id;
+         option.setAttribute("api-spec-id", spec.id);
+         option.setAttribute("api-spec-url", spec.url);
+
+         option.textContent = spec.title;
+         selectionBox.appendChild(option);
+         selectionBox.onchange = function() {
+
+            let sender = document.getElementById( "list-api-specs" );
+            let selectedOption = sender.options[sender.selectedIndex];
+            let apiSpecId = selectedOption.getAttribute("api-spec-id");
+            let apiSpecUrl = selectedOption.getAttribute("api-spec-url");
+            changeSpecUrl(apiSpecId, apiSpecUrl);
+         }
       }
 
       const urlParams = new URLSearchParams(window.location.search);

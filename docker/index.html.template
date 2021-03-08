@@ -16,12 +16,18 @@
       server-url="${TMPL_RAPIDOC_SERVER_URL}"
       default-api-server="${TMPL_RAPIDOC_DEFAULT_API_SERVER}"
 
-      theme = "${TMPL_RAPIDOC_THEME}"
-      heading-text = "${TMPL_RAPIDC_HEADING_TEXT}"
-      bg-color = "${TMPL_RAPIDOC_BG_COLOR}"
-      text-color = "${TMPL_RAPIDOC_TEXT_COLOR}"
-      header-color = "${TMPL_RAPIDOC_HEADER_COLOR}"
-      primary-color = "${TMPL_RAPIDOC_PRIMARY_COLOR}"
+      theme = "light"
+      heading-text = "Techcombank API Documentation"
+      bg-color = "#fafafa"
+      text-color = ""
+      header-color = "#fafafa"
+      primary-color = "#F63C41"
+      regular-font = ""
+      mono-font = ""
+      nav-bg-color="#fafafa"
+      nav-hover-text-color="#9b0700"
+      nav-hover-bg-color="#ffebea"
+      
       regular-font = "${TMPL_RAPIDOC_REGULAR_FONT}"
       mono-font = "${TMPL_RAPIDOC_MONO_FONT}"
 
@@ -50,7 +56,7 @@
       allow-spec-url-load = "${TMPL_RAPIDOC_ALLOW_SPEC_URL_LOAD}"
       allow-server-selection = "${TMPL_RAPIDOC_ALLOW_SERVER_SELECTION}"
    >
-      <img slot="logo" src="${TMPL_RAPIDOC_LOGO_URL}" style="height:30px;">
+      <img slot="logo" src="${TMPL_RAPIDOC_LOGO_URL}" style="height:30px;" alt="Techcombank">
       <div slot="header" id="apispecs" style="display:flex; margin:0px 16px; justify-content:right; flex-direction: row-reverse; flex:1;">
          <style>
             .spec-item {
@@ -86,11 +92,26 @@
             .spec-description {
             
             }
+            select {
+               width: 100%;
+               min-width: 15ch;
+               max-width: 30ch;
+               border: 1px solid var(--select-border);
+               border-radius: 0.25em;
+               padding: 0.25em 0.5em;
+               font-size: 1.25rem;
+               cursor: pointer;
+               line-height: 1.1;
+               background-color: #fff;
+               background-image: linear-gradient(to top, #f9f9f9, #fff 33%);
+            }
          </style>
+         <select id="list-api-specs"/>
       </div>
    </rapi-doc>
 
   <script type="text/javascript" src="api-selector.js"></script>
+  <script type="text/javascript" src="jquery-3.6.0.min.js"></script>
   <script type="text/javascript" src="rapidoc-min.js"></script>
   <script type="text/javascript">
       loadManifest("$TMPL_RAPIDOC_API_MANIFEST_URL", renderManifest, renderError);

@@ -27,6 +27,7 @@ FROM nginx:alpine
 
 USER 0
 COPY ./docker/* /usr/share/nginx/html
+COPY ./docker/default.conf /etc/nginx/conf.d
 
 RUN mkdir /opt/app/ && \
     mkdir -p /usr/share/nginx/html/openapi

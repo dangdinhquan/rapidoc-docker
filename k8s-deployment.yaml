@@ -1,0 +1,113 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: rapidoc-config
+  namespace: devtools
+data:
+  TMPL_RAPIDOC_API_MANIFEST_URL: "./openapi/apis.json"
+  TMPL_RAPIDOC_RENDER_STYLE: "focused"
+  TMPL_RAPIDOC_SCHEMA_STYLE: "table"
+  TMPL_RAPIDOC_ALLOW_TRY: "true"
+  TMPL_RAPIDOC_ALLOW_SERVER_SELECTION: "true"
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: rapidoc-pvc
+  namespace: devtools
+  finalizers:
+    - kubernetes.io/pvc-protection
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: managed-nfs-storage
+  volumeMode: Filesystem
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: rapidoc
+  namespace: devtools
+  labels:
+    app: rapidoc
+    app.kubernetes.io/component: rapidoc
+    app.kubernetes.io/instance: rapidoc
+    app.kubernetes.io/part-of: rapidoc-app
+    app.openshift.io/runtime: tomcat
+    app.openshift.io/runtime-namespace: devtools
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rapidoc
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: rapidoc
+        deploymentconfig: rapidoc
+      annotations:
+        openshift.io/generated-by: OpenShiftWebConsole
+    spec:
+      volumes:
+        - name: rapidoc-volume
+          persistentVolumeClaim:
+            claimName: rapidoc-pvc
+      containers:
+        - name: rapidoc
+          image: 'docker-dso.techcombank.com.vn/tecombank-rapidoc'
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          resources: {}
+          envFrom: 
+            - configMapRef:
+                name: rapidoc-config
+          volumeMounts:
+            - name: rapidoc-volume
+              mountPath: /usr/share/nginx/html/openapi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: Always
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      imagePullSecrets:
+        - name: nexus-dso-cred
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
+---
+kind: Service
+apiVersion: v1
+metadata:
+  annotations:
+    openshift.io/generated-by: OpenShiftWebConsole
+  name: rapidoc
+  namespace: devtools
+  labels:
+    app: rapidoc
+    app.kubernetes.io/component: rapidoc
+    app.kubernetes.io/instance: rapidoc
+    app.kubernetes.io/part-of: rapidoc-app
+    app.openshift.io/runtime-version: '2205'
+spec:
+  ports:
+    - name: 8080-tcp
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: rapidoc
+    deploymentconfig: rapidoc
+  type: ClusterIP
+  sessionAffinity: None
