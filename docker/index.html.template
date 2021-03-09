@@ -55,6 +55,9 @@
       allow-spec-file-load = "${TMPL_RAPIDOC_ALLOW_SPEC_FILE_LOAD}"
       allow-spec-url-load = "${TMPL_RAPIDOC_ALLOW_SPEC_URL_LOAD}"
       allow-server-selection = "${TMPL_RAPIDOC_ALLOW_SERVER_SELECTION}"
+      
+      fill-request-fields-with-example = "true"
+      info-description-headings-in-navbar = "true"
    >
       <img slot="logo" src="${TMPL_RAPIDOC_LOGO_URL}" style="height:30px;" alt="Techcombank">
       <div slot="header" id="apispecs" style="display:flex; margin:0px 16px; justify-content:right; flex-direction: row-reverse; flex:1;">

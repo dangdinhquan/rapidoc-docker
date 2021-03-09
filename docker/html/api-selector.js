@@ -19,10 +19,11 @@ function changeSpecUrl(specId, specUrl) {
       search.value = ""
    }
    docEl.setAttribute('spec-url', specUrl);
+   docEl.scrollTo(window.location.hash);
 
    const url = new URL(window.location);
    url.searchParams.set('api', specId);
-   window.history.pushState({}, "", url.origin.toString() + url.search.toString());
+   window.history.pushState({}, "", url.origin.toString() + url.search.toString() + window.location.hash);
  }
 
  /**
